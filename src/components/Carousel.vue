@@ -14,7 +14,8 @@
     @Component
     export default class Carousel extends Vue {
         @Prop() private images: Array<string>;
-        constructor(){
+
+        constructor() {
             super();
             this.images = new Array<string>();
             this.images.push(require("@/assets/girl.png"));
@@ -25,10 +26,12 @@
 </script>
 
 <style scoped lang="scss">
-  #container {
-    .block {
-      text-align: center;
-    }
+  .block {
+    text-align: center;
+  }
+
+  img {
+    width: 70%;
   }
 
   .el-carousel__item h3 {

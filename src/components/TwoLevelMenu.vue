@@ -2,11 +2,12 @@
   <div id="container">
     <div>
       <ul>
-        <li>推荐</li>
-        <li>排行榜</li>
-        <li>歌单</li>
-        <li>歌手</li>
-        <li>新碟上架</li>
+        <li><router-link to="/recommend">推荐</router-link></li>
+        <li><router-link to="/ranking">排行榜</router-link></li>
+        <li><router-link to="/sheet">歌单</router-link></li>
+        <li><router-link to="/singer">歌手</router-link></li>
+        <li><router-link to="/newMusic">新碟上架</router-link></li>
+        <li><router-link to="/home">我的主页</router-link></li>
       </ul>
     </div>
   </div>
@@ -33,9 +34,13 @@
 
       ul {
         display: flex;
+        width: 100%;
+        list-style: none;
         justify-content: space-around;
         height: 35px;
+        min-width: 700px;
         align-items: center;
+        margin: 0 auto;
 
         > li {
           color: #ffffff;
@@ -46,6 +51,10 @@
 
           &:hover {
             background-color: #9b0909;
+          }
+
+          > a {
+            color: #ffffff;
           }
         }
       }

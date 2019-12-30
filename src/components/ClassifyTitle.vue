@@ -16,16 +16,39 @@
 
     @Component
     export default class ClassifyTitle extends Vue {
-        @Prop({default: false}) showMore!: boolean;
-        @Prop() title!: string;
+        @Prop() private _showMore!: boolean;
+        @Prop() private _title!: string;
 
+        get showMore(): boolean {
+            return this._showMore;
+        }
+
+        set showMore(value: boolean) {
+            this._showMore = value;
+        }
+
+        get title(): string {
+            return this._title;
+        }
+
+        set title(value: string) {
+            this._title = value;
+        }
+
+        constructor() {
+            super();
+        }
+
+        created(){
+            console.log("Why?、、、");
+        }
     }
 </script>
 
 <style scoped lang="scss">
   #container {
     display: flex;
-    width: 80%;
+    width: 100%;
     align-items: center;
     justify-content: space-between;
     border-bottom: 2px solid #C10D0C;

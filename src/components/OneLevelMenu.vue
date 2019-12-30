@@ -4,9 +4,9 @@
       <div class="title">网易云音乐</div>
       <div class="items">
         <ul>
-          <li>发现音乐</li>
-          <li>我的音乐</li>
-          <li>朋友</li>
+          <li><router-link to="/discoverMusic">发现音乐</router-link></li>
+          <li><router-link to="/myMusic">我的音乐</router-link></li>
+          <li><router-link to="/friend">朋友</router-link></li>
         </ul>
       </div>
       <div class="search-info">
@@ -90,6 +90,7 @@
     @include centrality;
 
     > ul {
+      width: 100%;
       height: 100%;
       @include centrality(center);
 
@@ -104,6 +105,10 @@
           background-color: #000000;
           cursor: pointer;
           color: #ffffff;
+        }
+
+        > a {
+          color: #cccccc;
         }
       }
     }

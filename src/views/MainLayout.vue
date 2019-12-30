@@ -1,16 +1,8 @@
 <template>
+  <!--应用主布局-->
   <div id="container">
     <div class="item">
       <OneLevelMenu></OneLevelMenu>
-    </div>
-    <div class="item">
-      <TwoLevelMenu></TwoLevelMenu>
-    </div>
-    <div class="item">
-      <Carousel></Carousel>
-    </div>
-    <div class="content">
-      <ClassifyTitle showMore="false" title="Polaris"></ClassifyTitle>
     </div>
     <div class="item">
       <router-view></router-view>
@@ -31,6 +23,7 @@
     import TwoLevelMenu from "@/components/TwoLevelMenu.vue";
     import Carousel from "@/components/Carousel.vue";
     import ClassifyTitle from "@/components/ClassifyTitle.vue";
+
     @Component({
         components: {ClassifyTitle, Carousel, TwoLevelMenu, Footer, OneLevelMenu}
     })
@@ -41,13 +34,7 @@
 
 <style lang="scss" scoped>
   @import "../styles/common.css";
+
   #container {
-    .item{
-      background-color: rebeccapurple;
-    }
-    .content{
-      display: flex;
-      justify-content: center;
-    }
   }
 </style>
