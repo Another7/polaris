@@ -23,14 +23,13 @@
     @Component
     export default class SimpleMusicList extends Vue {
         @Prop({
-            default: [{
+            default: () => [{
                 musicId: "1234556",
                 musicName: "你能听到我的心吗"
             }]
         }) musicList!: Array<any>;
 
-        constructor() {
-            super();
+        private mounded() {
             this.musicList = [];
             let item = {
                 musicId: "1234556",

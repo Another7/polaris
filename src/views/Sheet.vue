@@ -64,12 +64,12 @@
             </div>
           </div>
           <div class="sheet">
-            <SheetCover v-for="i in 20"></SheetCover>
+            <SheetCover :key="i" v-for="i in 20"></SheetCover>
           </div>
           <div class="page">
             <el-pagination
                     :total="100"
-                    @current-change="demo"
+                    @current-change="1"
                     background
                     layout="prev, pager, next">
             </el-pagination>
@@ -207,7 +207,7 @@
                   display: flex;
                   align-self: stretch;
                   justify-content: center;
-                  align-items: start;
+                  align-items: flex-start;
                   border-right: 1px darkgrey solid;
                   padding-top: 10px;
                 }
@@ -235,8 +235,7 @@
                     }
 
                     > span {
-                      margin: 0 10px;
-                      margin-top: 10px;
+                      margin: 10px 10px 0;
                     }
                   }
                 }

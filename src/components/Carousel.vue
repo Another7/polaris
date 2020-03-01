@@ -2,7 +2,7 @@
   <div class="block">
     <el-carousel trigger="click" height="336px">
       <el-carousel-item :key="index" v-for="(image, index) in images">
-        <img :src="image"/>
+        <img :src="image" alt=""/>
       </el-carousel-item>
     </el-carousel>
   </div>
@@ -13,10 +13,15 @@
 
     @Component
     export default class Carousel extends Vue {
-        @Prop() private images: Array<string>;
-
-        constructor() {
-            super();
+        @Prop() private images!: Array<string>;
+        // constructor() {
+        //     super();
+        //     this.images = new Array<string>();
+        //     this.images.push(require("@/assets/girl.png"));
+        //     this.images.push(require("@/assets/girl.png"));
+        //     this.images.push(require("@/assets/girl.png"));
+        // }
+        created() {
             this.images = new Array<string>();
             this.images.push(require("@/assets/girl.png"));
             this.images.push(require("@/assets/girl.png"));

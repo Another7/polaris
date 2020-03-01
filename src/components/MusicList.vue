@@ -83,7 +83,7 @@
           margin-left: 30px;
           display: flex;
           justify-content: center;
-          align-items: end;
+          align-items: flex-end;
         }
 
       }

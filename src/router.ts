@@ -11,6 +11,10 @@ import Sheet from "@/views/Sheet.vue";
 import Singer from "@/views/Singer.vue";
 import NewMusic from "@/views/NewMusic.vue";
 import Home from "@/views/Home.vue";
+import Creator from "@/views/creator/Creator.vue";
+import Index from "@/views/creator/Index.vue";
+import PublishWorks from "@/views/creator/PublishWorks.vue";
+import Administrator from "@/views/administrator/Administrator.vue";
 
 Vue.use(Router);
 
@@ -79,6 +83,29 @@ export default new Router({
                     component: Friend
                 }
             ]
+        },
+        {
+            path: '/creator',
+            name: 'creator',
+            component: Creator,
+            redirect: 'index',
+            children: [
+                {
+                    path: '/index',
+                    name: 'index',
+                    component: Index
+                },
+                {
+                    path: '/publishWorks',
+                    name: 'publishWorks',
+                    component: PublishWorks
+                }
+            ]
+        },
+        {
+            path: '/administrator',
+            name: 'administrator',
+            component: Administrator
         }
     ]
 })

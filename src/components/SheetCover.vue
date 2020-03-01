@@ -19,14 +19,16 @@
     @Component
     export default class SheetCover extends Vue {
         @Prop({
-            default: {
-                "id": 123,
-                "title": "demo",
-                "img": require("../assets/girl.png"),
-                "playNumber": 0,
-                "creator": "another",
-                "creatorId": 0
-            }
+            default: () => (
+                {
+                    "id": 123,
+                    "title": "demo",
+                    "img": require("../assets/girl.png"),
+                    "playNumber": 0,
+                    "creator": "another",
+                    "creatorId": 0
+                }
+            )
         })
         sheet!: Sheet;
         @Prop({default: false}) showCreator!: boolean;
@@ -39,7 +41,7 @@
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
   #container {
     display: inline-flex;
 
