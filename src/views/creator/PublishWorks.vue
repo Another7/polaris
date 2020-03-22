@@ -16,7 +16,7 @@
                     :on-success="handleAlbumSuccess"
                     :show-file-list="false"
                     accept="image/*"
-                    action="http://localhost:8989/test/upload"
+                    action="http://www.another.ren:8989/test/upload"
                     class="avatar-uploader"
                     name="files">
               <img :src="albumForm.image" alt="专辑图片" class="avatar" v-if="albumForm.image">
@@ -29,11 +29,10 @@
                     :file-list="fileList"
                     :on-success="changeFileList"
                     accept="audio/*"
-                    action="http://localhost:8989/test/upload"
+                    action="http://www.another.ren:8989/test/upload"
                     multiple
                     name="files">
               <el-button size="small" type="primary">点击上传</el-button>
-              <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
           </el-form-item>
           <el-form-item>
@@ -51,6 +50,7 @@
 
     @Component
     export default class PublishWorks extends Vue {
+        private imageUrl: string = '';
         private albumForm = {
             title: '',
             description: '',
@@ -118,17 +118,41 @@
             console.log(file);
             this.albumForm.image = URL.createObjectURL(file.raw);
             // let map: Map<string, string> = new Map(Object.entries(res));
+            // console.log(map);
             // for (let [key, value] of map) {
             //     console.log(key + '--' + value);
-            //     this.albumForm.image = value;
+            //     this.imageUrl = value;
             // }
+            this.imageUrl = res[0].url;
         }
 
 
+        /**
+         * 发布专辑
+         * @param formName
+         */
         submitAlbum(formName: string) {
             (this.$refs[formName] as Form).validate((valid: boolean) => {
                 if (valid) {
-
+                    this.axios.post('/albums', {
+                        title: this.albumForm.title,
+                        description: this.albumForm.description,
+                        singerId: this.$store.state.singer.id,
+                        singerName: this.$store.state.singer.nickName,
+                        //TODO 生产环境修改为实际路径
+                        image: this.imageUrl,
+                        collectionMusic: JSON.stringify(this.albumForm.musicList),
+                        status: 0
+                    }).then((response) => {
+                        console.log(response.data);
+                        let album = response.data;
+                        if (album.id) {
+                            this.$message.success('专辑发布成功！！！');
+                            //TODO 跳转到作品数据页面
+                            this.$router.push('myAlbum');
+                        }
+                    });
+                    console.log('发布专辑');
                 } else {
                     console.log('error submit');
                     return false;

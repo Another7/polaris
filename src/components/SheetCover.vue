@@ -23,7 +23,7 @@
                 {
                     "id": 123,
                     "title": "demo",
-                    "img": require("../assets/girl.png"),
+                    "img": require("../assets/leaf.jpg"),
                     "playNumber": 0,
                     "creator": "another",
                     "creatorId": 0

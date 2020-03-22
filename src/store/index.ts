@@ -14,6 +14,16 @@ export default new Vuex.Store({
         login(state, payload) {
             state.user.isLogin = true;
             state.user.account = payload.account;
+            state.user.avatar = payload.avatar;
+            state.user.nickName = payload.nickName;
+            state.user.id = payload.id;
+        },
+        passAuthentication(state, singer) {
+            state.singer.authentication = singer.authentication;
+            state.singer.isLogin = true;
+            state.singer.account = singer.email;
+            state.singer.id = singer.id;
+            state.singer.nickName = singer.nickName;
         }
     },
     actions: {}

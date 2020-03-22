@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <div class="cover">
-      <img src="../assets/girl.png">
+      <img src="../assets/leaf.jpg">
       <div>
         <p>飙升榜</p>
       </div>

@@ -1,32 +1,19 @@
 <template>
   <div id="container">
-    <el-row align="middle" type="flex">
-      <el-col :span="4">
-        <el-avatar
-                src="https://p1.music.126.net/SA5XL3t3I83OtVWMqNilyg==/18644418674164876.jpg?param=180y180"></el-avatar>
-      </el-col>
-      <el-col :span="20">
-        因为了解
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col>音乐创作</el-col>
-    </el-row>
     <el-row justify="center" type="flex">
-      <el-col>
-        <el-button @click="apply" v-if="!authentication">申请入驻</el-button>
-        <div v-else>
-          歌手作品数据
+      <el-col v-if="singerStatus === 1">
+        <div style="margin-bottom: 20px">还未入驻歌手？</div>
+        <el-button @click="apply" type="primary">申请入驻</el-button>
+      </el-col>
+      <el-col v-else-if="singerStatus === 2">
+        <div>
+          已申请入驻，请耐心等待审核。
         </div>
       </el-col>
-    </el-row>
-    <el-row hidden="hidden">
-      <el-col>
-        <el-button
-                @click="showMessage"
-                plain>
-          已申请，等待管理员审核。
-        </el-button>
+      <el-col v-else-if="singerStatus === 3">
+        <div>
+          <el-button @click="publishWorks" type="primary">发布专辑</el-button>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -37,19 +24,70 @@
 
     @Component
     export default class Index extends Vue {
-        private authentication: boolean = false;
+        private user = {
+            id: '',
+            nickName: '',
+            isLogin: false,
+            account: '',
+            avatar: 'https://p1.music.126.net/SA5XL3t3I83OtVWMqNilyg==/18644418674164876.jpg?param=180y180'
+        };
+        // 1.未申请
+        // 2.已申请，审核中
+        // 3.已认证
+        private singerStatus = 0;
 
-        apply() {
-            this.axios.post('singers', {
-                email: '',
-                password: ''
+        created() {
+            let user: string | null = sessionStorage.getItem('user');
+            if (user !== null) {
+                this.user = JSON.parse(user);
+                console.log('Index 中的user');
+                console.log(this.user);
+            }
+            // 查询歌手信息，判断歌手状态
+            this.axios.get('/singers', {
+                params: {
+                    email: this.user.account
+                }
             }).then((response) => {
-                console.log(response);
-                this.showMessage();
-            }).catch((error) => {
-                console.log(error);
-                this.showMessage();
+                let singer = response.data;
+                // 未申请入驻歌手
+                if (singer === null || singer === undefined || singer === '') {
+                    this.singerStatus = 1;
+                } else {
+                    // 已申请入驻
+                    this.singerStatus = singer.authentication ? 3 : 2;
+                    if (this.singerStatus === 3) {
+                        this.$store.commit('passAuthentication', singer);
+                    }
+                }
+            }).catch((reason) => {
+                console.log(reason);
             });
+        }
+
+        // 申请歌手认证
+        apply() {
+            if (this.singerStatus === 1) {
+                this.axios.post('/singers', {
+                    email: this.user.account,
+                    password: '123456',
+                    nickName: this.user.nickName,
+                    authentication: false,
+                    userId: this.user.id
+                }).then((response) => {
+                    //TODO 状态整理
+                    if (response.data.code === 1) {
+                        this.singerStatus = 2;
+                    } else if (response.data.code === 2) {
+                        this.singerStatus = 2;
+                    }
+                    this.singerStatus = 2;
+                    this.showMessage();
+                }).catch((error) => {
+                    console.log(error);
+                    this.showMessage();
+                });
+            }
         }
 
         showMessage() {
@@ -58,6 +96,10 @@
                 message: '等待审核',
                 type: 'success'
             });
+        }
+
+        publishWorks() {
+            this.$router.push('publishWorks');
         }
     }
 </script>

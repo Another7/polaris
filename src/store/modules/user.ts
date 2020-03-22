@@ -1,7 +1,9 @@
 let user = {
     id: '',
+    nickName: '',
     isLogin: false,
-    account: ''
+    account: '',
+    avatar: ''
 };
 export {
     user

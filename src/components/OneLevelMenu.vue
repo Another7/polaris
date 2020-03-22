@@ -17,34 +17,32 @@
       </div>
       <div class="search-info">
         <div>
-          <input class="search-music" placeholder="搜索音乐"></input>
+          <label>
+            <input class="search-music" placeholder="搜索音乐"></input>
+          </label>
         </div>
         <div>
           <el-button @click="creator" round size="mini">创作者中心</el-button>
         </div>
         <div>
-          <el-dropdown placement="bottom" v-if="!this.$store.state.user.isLogin">
+          <el-dropdown placement="bottom" v-if="this.$store.state.user.isLogin">
             <span class="el-dropdown-link">
-              <el-avatar size="medium"
-                         src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+              <el-avatar :src="this.$store.state.user.avatar"
+                         size="medium"></el-avatar>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>黄金糕</el-dropdown-item>
-              <el-dropdown-item>狮子头</el-dropdown-item>
-              <el-dropdown-item>螺蛳粉</el-dropdown-item>
-              <el-dropdown-item disabled>双皮奶</el-dropdown-item>
-              <el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+              <el-dropdown-item>个人中心</el-dropdown-item>
+              <el-dropdown-item>退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <!--          <el-button round size="mini" >Welcome</el-button>-->
           <el-button @click="loginFormVisible = true" round size="mini" v-else>登录</el-button>
           <el-dialog :visible.sync="loginFormVisible" title="登录">
             <el-form :model="loginForm" :rules="rules" ref="loginForm">
               <el-form-item label="账号" prop="email">
-                <el-input v-model="loginForm.email"></el-input>
+                <el-input placeholder="邮箱" v-model="loginForm.email"></el-input>
               </el-form-item>
               <el-form-item label="密码" prop="password">
-                <el-input type="password" v-model="loginForm.password"></el-input>
+                <el-input placeholder="密码" type="password" v-model="loginForm.password"></el-input>
               </el-form-item>
             </el-form>
             <div class="dialog-footer" slot="footer">
@@ -55,10 +53,10 @@
           <el-dialog :visible.sync="registerFormVisible" title="注册">
             <el-form :model="registerForm" :rules="rules" ref="registerForm">
               <el-form-item label="账号" prop="email">
-                <el-input v-model="registerForm.email"></el-input>
+                <el-input placeholder="邮箱" v-model="registerForm.email"></el-input>
               </el-form-item>
               <el-form-item label="密码" prop="password">
-                <el-input v-model="registerForm.password"></el-input>
+                <el-input placeholder="密码" type="password" v-model="registerForm.password"></el-input>
               </el-form-item>
             </el-form>
             <div class="dialog-footer" slot="footer">
@@ -110,33 +108,50 @@
             }]
         };
 
+        created() {
+            console.log("created");
+            // 默认登录，便于调试
+            // store.commit('login', {
+            //     id: 2,
+            //     account: '123456@qq.com',
+            //     nickName: '车同轨书同文',
+            //     avatar: 'http://p2.music.126.net/X7f92tSJ-b0_sC1u9tgAyQ==/109951163654227442.jpg?param=177y177'
+            // });
+        }
+
         submitForm(formName: string) {
             (this.$refs[formName] as Form).validate((valid: boolean) => {
                 if (valid) {
                     // api.apiUserLogin(this.loginForm);
-                    this.axios.get('/singers/login', {
+                    this.axios.get('/users/login', {
                         params: this.loginForm
                     }).then((response) => {
                         console.log(response);
-                        let data = response.data.data;
+                        let data = response.data;
                         let code = data.code;
                         // 1 表示登录成功
                         if (code === '1') {
-                            console.log('1');
+                            //TODO sessionStore存储用户登录信息，下次直接登录
                             this.loginFormVisible = false;
+
                             store.commit('login', {
-                                account: data.entity.email
+                                account: data.entity.email,
+                                avatar: data.entity.image,
+                                nickName: data.entity.nickName
                             });
                             // 2 表示账号密码不匹配，登录失败
                         } else if (code === '2') {
-                            console.log('2')
+                            this.$message('密码错误');
+                            console.log('2');
                             // 0 表示该账号未注册
                         } else if (code === '0') {
+                            this.$message('账号未注册');
                             console.log('0')
                         }
                     }).catch((error) => {
                         console.log(error);
-                    })
+                    });
+                    this.loginFormVisible = false;
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -144,17 +159,23 @@
             });
         }
 
+        // 用户注册
         register(formName: string) {
             (this.$refs[formName] as Form).validate((valid: boolean) => {
                 if (valid) {
-                    this.axios.post('/singers', {
+                    this.axios.post('/users', {
                         email: this.registerForm.email,
                         password: this.registerForm.password,
+                        notification: JSON.stringify({
+                            "thumbsUp": 1,
+                            "message": 1,
+                            "commit": 1
+                        }),
                         nickName: '',
                         authentication: false
                     }).then((response) => {
                         console.log(response);
-                        let data = response.data.data;
+                        let data = response.data;
                         let code = data.code;
                         // 0 表示注册失败
                         if (code === '0') {
@@ -162,12 +183,11 @@
                             alert('注册失败, 请稍后重试');
                         } else if (code === '1') {
                             alert('注册成功');
-                            this.registerFormVisible = false;
                             // 2 表示该账号已被注册
                         } else if (code === '2') {
                             alert('该账号已被注册，是否忘记密码?');
                         }
-
+                        this.registerFormVisible = false;
                     }).catch((error) => {
                         console.log(error);
                     });
@@ -176,10 +196,17 @@
         }
 
         creator() {
-            let routeUrl = this.$router.resolve({
-                path: '/creator'
-            });
-            window.open(routeUrl.href, '_blank');
+            if (!this.$store.state.user.isLogin) {
+                this.$message.warning('请先登录');
+                return false;
+            } else {
+                // 通过session存储用户登录信息
+                sessionStorage.setItem('user', JSON.stringify(this.$store.state.user));
+                let routeUrl = this.$router.resolve({
+                    path: '/creator'
+                });
+                window.open(routeUrl.href, '_blank');
+            }
         }
     }
 </script>

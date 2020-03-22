@@ -15,6 +15,7 @@ import Creator from "@/views/creator/Creator.vue";
 import Index from "@/views/creator/Index.vue";
 import PublishWorks from "@/views/creator/PublishWorks.vue";
 import Administrator from "@/views/administrator/Administrator.vue";
+import MyAlbum from "@/views/creator/MyAlbum.vue";
 
 Vue.use(Router);
 
@@ -99,6 +100,11 @@ export default new Router({
                     path: '/publishWorks',
                     name: 'publishWorks',
                     component: PublishWorks
+                },
+                {
+                    path: '/myAlbum',
+                    name: 'myAlbum',
+                    component: MyAlbum
                 }
             ]
         },

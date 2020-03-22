@@ -1,6 +1,6 @@
 <template>
   <div class="block">
-    <el-carousel trigger="click" height="336px">
+    <el-carousel height="336px" trigger="click">
       <el-carousel-item :key="index" v-for="(image, index) in images">
         <img :src="image" alt=""/>
       </el-carousel-item>
@@ -9,11 +9,11 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from 'vue-property-decorator';
+    import {Component, Vue} from 'vue-property-decorator';
 
     @Component
     export default class Carousel extends Vue {
-        @Prop() private images!: Array<string>;
+        private images!: Array<string>;
         // constructor() {
         //     super();
         //     this.images = new Array<string>();
@@ -23,14 +23,14 @@
         // }
         created() {
             this.images = new Array<string>();
-            this.images.push(require("@/assets/girl.png"));
-            this.images.push(require("@/assets/girl.png"));
-            this.images.push(require("@/assets/girl.png"));
+            this.images.push(require("@/assets/leaf.jpg"));
+            this.images.push(require("@/assets/leaf.jpg"));
+            this.images.push(require("@/assets/leaf.jpg"));
         }
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
   .block {
     text-align: center;
   }
