@@ -18,21 +18,21 @@
       <div class="search-info">
         <div>
           <label>
-            <input class="search-music" placeholder="搜索音乐"></input>
+            <el-input @change="searchMusic" placeholder="搜索音乐" style="width: 120px" v-model="searchWord"></el-input>
           </label>
         </div>
         <div>
           <el-button @click="creator" round size="mini">创作者中心</el-button>
         </div>
         <div>
-          <el-dropdown placement="bottom" v-if="this.$store.state.user.isLogin">
+          <el-dropdown @command="handleCommand" placement="bottom" v-if="this.$store.state.user.isLogin">
             <span class="el-dropdown-link">
               <el-avatar :src="this.$store.state.user.avatar"
                          size="medium"></el-avatar>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>个人中心</el-dropdown-item>
-              <el-dropdown-item>退出</el-dropdown-item>
+              <el-dropdown-item command="myIndex">我的主页</el-dropdown-item>
+              <el-dropdown-item command="loginOut">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <el-button @click="loginFormVisible = true" round size="mini" v-else>登录</el-button>
@@ -74,6 +74,7 @@
     import {Component, Vue} from 'vue-property-decorator';
     import {Form} from "element-ui";
     import store from '@/store';
+    import EventBus from "@/utils/EventBus";
     // import * as api from '../requests/api'
 
     @Component
@@ -108,6 +109,8 @@
             }]
         };
 
+        private searchWord: string = '';
+
         created() {
             console.log("created");
             // 默认登录，便于调试
@@ -117,6 +120,18 @@
             //     nickName: '车同轨书同文',
             //     avatar: 'http://p2.music.126.net/X7f92tSJ-b0_sC1u9tgAyQ==/109951163654227442.jpg?param=177y177'
             // });
+        }
+
+        handleCommand(command: string) {
+            switch (command) {
+                case 'myIndex':
+                    this.$router.push('home');
+                    break;
+                case 'loginOut':
+                    break;
+                default:
+                    break;
+            }
         }
 
         submitForm(formName: string) {
@@ -136,8 +151,9 @@
 
                             store.commit('login', {
                                 account: data.entity.email,
-                                avatar: data.entity.image,
-                                nickName: data.entity.nickName
+                                avatar: 'http://www.another.ren:8089/images/' + data.entity.image,
+                                nickName: data.entity.nickName,
+                                id: data.entity.id
                             });
                             // 2 表示账号密码不匹配，登录失败
                         } else if (code === '2') {
@@ -195,6 +211,7 @@
             });
         }
 
+        // 跳转至创作者中心
         creator() {
             if (!this.$store.state.user.isLogin) {
                 this.$message.warning('请先登录');
@@ -206,6 +223,24 @@
                     path: '/creator'
                 });
                 window.open(routeUrl.href, '_blank');
+            }
+        }
+
+        // 用户搜索音乐
+        searchMusic(word: string) {
+            // 首次跳转过去
+            if (this.searchWord !== '') {
+                if (this.$route.name !== 'searchResult') {
+                    this.$router.push({
+                        name: 'searchResult',
+                        params: {
+                            searchWord: this.searchWord
+                        }
+                    });
+                    // 如果是已经跳转，则直接更新searchWord，搜索结果页面监听searchWord
+                } else if (this.$route.name === 'searchResult') {
+                    EventBus.$emit('search', this.searchWord);
+                }
             }
         }
     }
@@ -232,7 +267,6 @@
     background-color: $themeColor;
     color: $fontColor;
     min-width: 1000px;
-
     display: flex;
 
     > div {
@@ -282,7 +316,7 @@
 
     .search-music {
       border-radius: 25px;
-      height: 20px;
+      height: 10px;
     }
   }
 </style>

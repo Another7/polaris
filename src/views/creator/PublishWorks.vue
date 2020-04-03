@@ -19,7 +19,7 @@
                     action="http://www.another.ren:8989/test/upload"
                     class="avatar-uploader"
                     name="files">
-              <img :src="albumForm.image" alt="专辑图片" class="avatar" v-if="albumForm.image">
+              <img :src="imageUrl" alt="专辑图片" class="avatar" v-if="imageUrl">
               <i class="el-icon-plus avatar-uploader-icon" v-else></i>
             </el-upload>
           </el-form-item>
@@ -116,14 +116,8 @@
         handleAlbumSuccess(res: any, file: any) {
             console.log(res);
             console.log(file);
-            this.albumForm.image = URL.createObjectURL(file.raw);
-            // let map: Map<string, string> = new Map(Object.entries(res));
-            // console.log(map);
-            // for (let [key, value] of map) {
-            //     console.log(key + '--' + value);
-            //     this.imageUrl = value;
-            // }
-            this.imageUrl = res[0].url;
+            this.imageUrl = URL.createObjectURL(file.raw);
+            this.albumForm.image = res[0].url;
         }
 
 
@@ -162,7 +156,6 @@
 
         changeFileList(response: Array<object>, file: any, fileList: any) {
             this.albumForm.musicList.push(response[0]);
-            console.log(this.albumForm);
         }
     }
 </script>

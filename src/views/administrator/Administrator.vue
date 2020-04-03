@@ -1,118 +1,136 @@
 <template>
   <div id="container">
-    <el-row justify="center" type="flex">
-      <el-col :span="6" v-if="!isLogin">
-        <el-form :model="administrator">
-          <el-form-item label="账号">
-            <el-input v-model="administrator.account"></el-input>
-          </el-form-item>
-          <el-form-item label="密码">
-            <el-input type="password" v-model="administrator.password"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="login" type="primary">登录</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      <el-col :span="20" v-else>
-        <el-tabs @tab-click="changeTabs" tab-position="left" v-model="activeName">
-          <el-tab-pane label="歌手入驻" name="first">
-            <el-table
-                    :data="singerTable"
-                    style="width: 100%">
-              <el-table-column
-                      align="center"
-                      type="index"
-              >
-              </el-table-column>
-              <el-table-column
-                      align="center"
-                      label="账号"
-                      prop="email"
-              >
-              </el-table-column>
-              <el-table-column
-                      align="center"
-                      label="昵称"
-                      prop="nickName"
-                      tooltip-effect="dark"
-              >
-              </el-table-column>
-              <el-table-column
-                      align="center"
-                      label="电话"
-                      prop="tel">
-              </el-table-column>
-              <el-table-column
-                      align="center"
-                      label="申请时间"
-                      prop="registerTime">
-              </el-table-column>
-              <el-table-column
-                      align="center"
-                      label="状态"
-                      prop="authentication">
-              </el-table-column>
-              <el-table-column
-                      align="center"
-                      fixed="right"
-                      label="操作"
-              >
-                <template slot-scope="scope">
-                  <el-button @click="authenticationPass(scope.row)" size="small" type="primary">通过</el-button>
-                  <el-button @click="authenticationRefuse(scope.row)" size="small" type="danger">拒绝</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-tab-pane>
-          <el-tab-pane label="音乐审核" name="second">
-            <el-button @click="multiplePass" type="primary">批量通过</el-button>
-            <el-button @click="multipleRefuse" type="danger">批量拒绝</el-button>
-            <el-table
-                    :data="musicTable"
-                    @selection-change="handleSelectionChange"
-                    ref="multipleTable"
-                    style="width: 100%">
-              <el-table-column
-                      type="selection">
-              </el-table-column>
-              <el-table-column
-                      label="歌曲名称"
-                      prop="name"
-              ></el-table-column>
-              <el-table-column
-                      label="作者"
-                      prop="singerName"
-              ></el-table-column>
-              <el-table-column
-                      :filter-method="albumFilterMethod"
-                      :filters="albumFilter"
-                      label="所属专辑"
-                      prop="belongAlbumName"
-              ></el-table-column>
-              <el-table-column
-                      fixed="right"
-                      label="操作"
-                      width="300">
-                <template slot-scope="scope">
-                  <el-button @click="play(scope.row)" size="small">试听</el-button>
-                  <el-button @click="musicPass(scope.row)" size="small" type="primary">通过</el-button>
-                  <el-button @click="musicRefuse(scope.row)" size="small" type="danger">拒绝</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-tab-pane>
-          <el-tab-pane label="首页轮播" name="third"></el-tab-pane>
-        </el-tabs>
-      </el-col>
-    </el-row>
+    <div class="table">
+      <el-row justify="center" type="flex">
+        <el-col :span="6" v-if="!isLogin">
+          <el-form :model="administrator">
+            <el-form-item label="账号">
+              <el-input v-model="administrator.account"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+              <el-input type="password" v-model="administrator.password"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="login" type="primary">登录</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <!--        数据页-->
+        <el-col :span="20" v-else>
+          <el-tabs @tab-click="changeTabs" tab-position="left" v-model="activeName">
+            <!--            标签页 歌手入驻-->
+            <el-tab-pane label="歌手入驻" name="first">
+              <el-table
+                      :data="singerTable"
+                      style="width: 100%">
+                <el-table-column
+                        align="center"
+                        type="index"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="账号"
+                        prop="email"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="昵称"
+                        prop="nickName"
+                        tooltip-effect="dark"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="电话"
+                        prop="tel">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="申请时间"
+                        prop="registerTime">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="状态"
+                        prop="authentication">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        fixed="right"
+                        label="操作"
+                >
+                  <template slot-scope="scope">
+                    <el-button @click="authenticationPass(scope.row)" size="small" type="primary">通过</el-button>
+                    <el-button @click="authenticationRefuse(scope.row)" size="small" type="danger">拒绝</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+            <!--            标签页 音乐审核-->
+            <el-tab-pane label="音乐审核" name="second">
+              <el-button @click="multiplePass" type="primary">批量通过</el-button>
+              <el-button @click="multipleRefuse" type="danger">批量拒绝</el-button>
+              <el-table
+                      :data="musicTable"
+                      @selection-change="handleSelectionChange"
+                      ref="multipleTable"
+                      style="width: 100%">
+                <el-table-column
+                        type="selection">
+                </el-table-column>
+                <el-table-column
+                        label="歌曲名称"
+                        prop="name"
+                ></el-table-column>
+                <el-table-column
+                        label="作者"
+                        prop="singerName"
+                ></el-table-column>
+                <el-table-column
+                        :filter-method="albumFilterMethod"
+                        :filters="albumFilter"
+                        label="所属专辑"
+                        prop="belongAlbumName"
+                ></el-table-column>
+                <el-table-column
+                        fixed="right"
+                        label="操作"
+                        width="300">
+                  <template slot-scope="scope">
+                    <el-button @click="play(scope.row)" size="small">试听</el-button>
+                    <el-button @click="musicPass(scope.row)" size="small" type="primary">通过</el-button>
+                    <el-button @click="musicRefuse(scope.row)" size="small" type="danger">拒绝</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="首页轮播" name="third"></el-tab-pane>
+          </el-tabs>
+        </el-col>
+      </el-row>
+      <!--      <el-row>-->
+      <!--        <el-col :span="20">-->
+      <!--          <el-button @click="demo(1)" type="primary">透明</el-button>-->
+      <!--          <el-button @click="demo(2)" type="primary">坠</el-button>-->
+      <!--        </el-col>-->
+      <!--      </el-row>-->
+    </div>
+    <div class="music-bar">
+      <MusicBar></MusicBar>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
+    import '@/utils/EventBus.ts';
+    import MusicBar from "@/components/MusicBar.vue";
+    import EventBus from "@/utils/EventBus";
 
     @Component({
+        components: {MusicBar},
         watch: {
             isLogin: function (singerArray) {
                 this.axios.get('/singers/all').then((response: any) => {
@@ -138,8 +156,31 @@
         private multipleSelection = Array<any>();
 
 
+        demo(index: number) {
+            let music1 = {
+                id: 123,
+                name: '透明',
+                url: 'http://www.another.ren:8089/audios/透明.mp3',
+                belongAlbumImageUrl: 'http://www.another.ren:8089/images/another.jpg',
+                singer: '邓紫棋',
+                singerId: 123
+            };
+            let music2 = {
+                id: 1234,
+                name: '坠',
+                url: 'http://www.another.ren:8089/audios/坠.mp3',
+                belongAlbumImageUrl: 'http://www.another.ren:8089/images/IU.jpg',
+                singer: 'Another',
+                singerId: 1234
+            };
+            if (index === 1) {
+                EventBus.$emit('addRecord', music1);
+            } else {
+                EventBus.$emit('addRecord', music2);
+            }
+        }
+
         created() {
-            console.log('admin created');
             // let isLogin: string | null = sessionStorage.getItem('adminIsLogin');
             let isLogin: string | null = localStorage.getItem('adminIsLogin');
             if (isLogin !== null && isLogin === 'true') {
@@ -335,6 +376,16 @@
 
         // 音乐试听
         play(row: any) {
+            console.log(row);
+            let music = {
+                id: 123,
+                name: '透明',
+                url: 'http://www.another.ren:8089/audios/透明.mp3',
+                belongAlbumImageUrl: 'http://www.another.ren:8089/images/another.jpg',
+                singer: '邓紫棋',
+                singerId: 123
+            };
+            EventBus.$emit('addRecord', music);
         }
 
         // 专辑过滤器比较方法
@@ -347,6 +398,14 @@
 
 <style lang="scss" scoped>
   #container {
-    padding: 10px 10px;
+    > .table {
+      padding: 10px 10px;
+    }
+
+    > .music-bar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
   }
 </style>

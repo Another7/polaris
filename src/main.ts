@@ -7,12 +7,13 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
+import '@/styles/icon/font_1711880_1gfgdgg94vqi.js'
 
 
 Vue.use(ElementUI);
 Vue.use(VueAxios, axios);
 Vue.config.productionTip = false;
-let environment = 'test';
+let environment = 'dev';
 switch (environment) {
     case 'dev':
         axios.defaults.baseURL = 'http://localhost:8989';

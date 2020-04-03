@@ -11,7 +11,7 @@
       <Footer></Footer>
     </div>
     <div class="item">
-      <!--<MusicPlayBar></MusicPlayBar>-->
+      <MusicBar></MusicBar>
     </div>
   </div>
 </template>
@@ -23,9 +23,10 @@
     import TwoLevelMenu from "@/components/TwoLevelMenu.vue";
     import Carousel from "@/components/Carousel.vue";
     import ClassifyTitle from "@/components/ClassifyTitle.vue";
+    import MusicBar from "@/components/MusicBar.vue";
 
     @Component({
-        components: {ClassifyTitle, Carousel, TwoLevelMenu, Footer, OneLevelMenu}
+        components: {MusicBar, ClassifyTitle, Carousel, TwoLevelMenu, Footer, OneLevelMenu}
     })
     export default class HelloWorld extends Vue {
         @Prop() private msg!: string;

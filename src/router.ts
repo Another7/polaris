@@ -16,6 +16,8 @@ import Index from "@/views/creator/Index.vue";
 import PublishWorks from "@/views/creator/PublishWorks.vue";
 import Administrator from "@/views/administrator/Administrator.vue";
 import MyAlbum from "@/views/creator/MyAlbum.vue";
+import SearchResult from "@/views/SearchResult.vue";
+import PersonInfo from "@/views/PersonInfo.vue";
 
 Vue.use(Router);
 
@@ -70,6 +72,11 @@ export default new Router({
                             path: '/home',
                             name: 'home',
                             component: Home
+                        },
+                        {
+                            path: '/personInfo',
+                            name: 'personInfo',
+                            component: PersonInfo
                         }
                     ]
                 },
@@ -82,6 +89,11 @@ export default new Router({
                     path: '/friend',
                     name: 'friend',
                     component: Friend
+                },
+                {
+                    path: '/searchResult',
+                    name: 'searchResult',
+                    component: SearchResult
                 }
             ]
         },
