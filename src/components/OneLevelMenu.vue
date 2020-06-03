@@ -1,17 +1,19 @@
 <template>
   <div id="container">
     <div>
-      <div class="title">网易云音乐</div>
+      <div class="title">云上音乐</div>
       <div class="items">
         <ul>
           <li>
             <router-link to="/discoverMusic">发现音乐</router-link>
           </li>
           <li>
-            <router-link to="/myMusic">我的音乐</router-link>
+            <!--            <router-link to="/myMusic">我的音乐</router-link>-->
+            <span @click="goMyMusic">我的音乐</span>
           </li>
           <li>
-            <router-link to="/friend">朋友</router-link>
+            <!--            <router-link to="/friend">朋友</router-link>-->
+            <span @click="goFriend">朋友</span>
           </li>
         </ul>
       </div>
@@ -27,11 +29,12 @@
         <div>
           <el-dropdown @command="handleCommand" placement="bottom" v-if="this.$store.state.user.isLogin">
             <span class="el-dropdown-link">
-              <el-avatar :src="this.$store.state.user.avatar"
+              <el-avatar :src="'http://www.another.ren:8089/images/' + this.$store.state.user.avatar"
                          size="medium"></el-avatar>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="myIndex">我的主页</el-dropdown-item>
+              <el-dropdown-item command="music">音乐页面</el-dropdown-item>
               <el-dropdown-item command="loginOut">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -75,7 +78,6 @@
     import {Form} from "element-ui";
     import store from '@/store';
     import EventBus from "@/utils/EventBus";
-    // import * as api from '../requests/api'
 
     @Component
     export default class OneLevelMenu extends Vue {
@@ -125,9 +127,24 @@
         handleCommand(command: string) {
             switch (command) {
                 case 'myIndex':
-                    this.$router.push('home');
+                    this.$router.push({
+                        name: 'home',
+                        params: {
+                            id: this.$store.state.user.id
+                        }
+                    });
+                    break;
+                case 'music':
+                    this.$router.push({
+                        name: 'music',
+                        params: {
+                            musicId: '11'
+                        }
+                    });
                     break;
                 case 'loginOut':
+                    store.commit('loginOut');
+                    this.$router.push('/recommend');
                     break;
                 default:
                     break;
@@ -137,7 +154,6 @@
         submitForm(formName: string) {
             (this.$refs[formName] as Form).validate((valid: boolean) => {
                 if (valid) {
-                    // api.apiUserLogin(this.loginForm);
                     this.axios.get('/users/login', {
                         params: this.loginForm
                     }).then((response) => {
@@ -146,12 +162,10 @@
                         let code = data.code;
                         // 1 表示登录成功
                         if (code === '1') {
-                            //TODO sessionStore存储用户登录信息，下次直接登录
                             this.loginFormVisible = false;
-
                             store.commit('login', {
                                 account: data.entity.email,
-                                avatar: 'http://www.another.ren:8089/images/' + data.entity.image,
+                                avatar: data.entity.image,
                                 nickName: data.entity.nickName,
                                 id: data.entity.id
                             });
@@ -196,12 +210,12 @@
                         // 0 表示注册失败
                         if (code === '0') {
                             // 1 表示注册成功
-                            alert('注册失败, 请稍后重试');
+                            this.$message.error('注册失败，请稍后重试');
                         } else if (code === '1') {
-                            alert('注册成功');
+                            this.$message.success('注册成功');
                             // 2 表示该账号已被注册
                         } else if (code === '2') {
-                            alert('该账号已被注册，是否忘记密码?');
+                            this.$message.warning('该账号已被注册，是否忘记密码?');
                         }
                         this.registerFormVisible = false;
                     }).catch((error) => {
@@ -241,6 +255,25 @@
                 } else if (this.$route.name === 'searchResult') {
                     EventBus.$emit('search', this.searchWord);
                 }
+            }
+        }
+
+        goMyMusic() {
+            if (!this.$store.state.user.isLogin) {
+                this.$message.warning('请先登录');
+            } else {
+                EventBus.$emit('getCollectionSheet');
+                EventBus.$emit('getCollectionSheetByUserId');
+                this.$router.push('myMusic');
+            }
+        }
+
+        goFriend() {
+            if (!this.$store.state.user.isLogin) {
+                this.$message.warning('请先登录');
+            } else {
+                EventBus.$emit('updateMoment');
+                this.$router.push('friend');
             }
         }
     }

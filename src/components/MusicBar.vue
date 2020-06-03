@@ -39,9 +39,24 @@
         </div>
         <!--      功能按钮-->
         <div class="function-buttons">
-          <svg aria-hidden="true" class="icon">
+          <svg @click="getMySheet" aria-hidden="true" class="icon">
             <use xlink:href="#icon-tianjiajiahaowubiankuang"></use>
           </svg>
+          <el-dialog :modal="false"
+                     :visible.sync="addVisible"
+                     title="添加到歌单"
+                     width="30%">
+            <div class="add-music-sheet">
+              <span :key="sheet.id" @click="addMusicToSheet(sheet.id, currentMusic.id)" v-for="sheet in createSheet">
+                <div>
+                  <el-avatar :src="sheet.image"></el-avatar>
+                </div>
+                <div>
+                  <span>{{sheet.title}}</span>
+                </div>
+              </span>
+            </div>
+          </el-dialog>
           <svg aria-hidden="true" class="icon">
             <use xlink:href="#icon-fenxiang"></use>
           </svg>
@@ -100,6 +115,9 @@
         private currentTime1: string = '00:00';
         private duration1: string = '00:00';
 
+        private createSheet: Array<any> = [];
+        private addVisible: boolean = false;
+
         @Watch('cycleMethod')
         changeCycleMethod() {
 
@@ -156,14 +174,22 @@
                 this.audio.play();
                 //更新进度条
                 setInterval(() => {
+                    // 实际的音乐播放进度和时长
                     this.currentTime = this.audio.currentTime;
                     this.duration = this.audio.duration;
-                    let minute = parseInt(String(this.audio.duration / 60));
-                    let second = parseInt(String(this.audio.duration % 60));
-                    this.duration1 = '0' + minute + ':' + second;
-                    minute = parseInt(String(this.currentTime / 60));
-                    second = parseInt(String(this.currentTime % 60));
-                    this.currentTime1 = '0' + minute + ':' + second;
+                    // 展示的音乐播放进度和时长
+                    let minute = parseInt(String(this.currentTime / 60));
+                    let second = parseInt(String(this.currentTime % 60));
+                    let minutePart: string = '';
+                    let secondPart: string = '';
+                    minutePart = minute < 10 ? '0' + minute : String(minute);
+                    secondPart = second < 10 ? '0' + second : String(second);
+                    this.currentTime1 = minutePart + ':' + secondPart;
+                    minute = parseInt(String(this.audio.duration / 60));
+                    second = parseInt(String(this.audio.duration % 60));
+                    minutePart = minute < 10 ? '0' + minute : String(minute);
+                    secondPart = second < 10 ? '0' + second : String(second);
+                    this.duration1 = minutePart + ':' + secondPart;
                 }, 1000);
                 this.paused = false;
                 // 显示musicBar
@@ -235,6 +261,41 @@
                 console.log(container);
             }
         }
+
+        // 获取歌单信息
+        getMySheet() {
+            if (this.audio.src != '') {
+                this.addVisible = true;
+                this.axios.get('/sheets/creatorId', {
+                    params: {
+                        creatorId: this.$store.state.user.id
+                    }
+                }).then((response) => {
+                    let sheetList = response.data;
+                    this.createSheet.length = 0;
+                    for (let sheet of sheetList) {
+                        sheet.image = 'http://www.another.ren:8089/images/' + sheet.image;
+                        this.createSheet.push(sheet);
+                    }
+                });
+            }
+        }
+
+        addMusicToSheet(sheetId: number, musicId: number) {
+            console.log(sheetId + '---' + musicId);
+            this.axios.get('/sheets/add', {
+                params: {
+                    sheetId: sheetId,
+                    musicId: musicId
+                }
+            }).then((response) => {
+                console.log(response);
+                if (response.data === 1) {
+                    this.addVisible = false;
+                    this.$message.success('添加成功');
+                }
+            })
+        }
     }
 </script>
 
@@ -258,6 +319,46 @@
     }
   }
 
+  .add-music-sheet {
+    > span {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      border-top: #99a9bf solid 1px;
+      padding: 5px;
+
+      &:hover {
+        background-color: #d9d9d9;
+        cursor: pointer;
+      }
+
+      > div {
+        margin-right: 10px;
+      }
+
+      > div:last-child {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    > span:first-child {
+      border-top: none;
+    }
+
+    /*> span:first-child {*/
+    /*  display: flex;*/
+    /*  justify-content: flex-start;*/
+    /*  align-items: center;*/
+
+    /*  > i {*/
+    /*    height: 40px;*/
+    /*    width: 40px;*/
+    /*    font-size: 40px;*/
+    /*  }*/
+    /*}*/
+  }
 
   #another {
     transition: bottom 1s;

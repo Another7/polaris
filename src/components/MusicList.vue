@@ -4,53 +4,86 @@
       <caption>
         <div>
           <span>歌曲列表</span>
-          <span>10首歌</span>
-          <span>播放23283次</span>
+          <span>{{musicList.length}}首歌</span>
+          <span>播放{{playCount}}次</span>
         </div>
       </caption>
       <tr>
         <th></th>
         <th>歌曲标题</th>
-        <th>时长</th>
         <th>歌手</th>
         <th>专辑</th>
       </tr>
-      <tr v-for="(music, index) in musicList">
-        <td>{{index + 1}}</td>
-        <td><a href="#">{{music.title}}</a></td>
-        <td>{{music.duration}}</td>
-        <td>{{music.singer}}</td>
-        <td>{{music.album}}</td>
+      <tr v-for="(music, index) in this.musicList">
+        <td align="center">
+          <span style="margin-right: 50px">{{index + 1}}</span>
+          <span class="title"><i @click="play(music)" class="el-icon-video-play"></i></span>
+        </td>
+        <td>
+          <span @click="goMusic(music.id)" class="title">{{music.name}}</span>
+        </td>
+        <td class="title">{{music.singerName}}</td>
+        <td class="title">{{music.belongAlbumName}}</td>
       </tr>
     </table>
   </div>
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from 'vue-property-decorator';
-    import {Music} from "@/domain/Music";
+    import {Component, Vue} from 'vue-property-decorator';
+    import EventBus from "@/utils/EventBus";
+
+    const GreetingProps = Vue.extend({
+        props: {
+            musicList: Array,
+            playCount: Number
+        }
+    });
 
     @Component
-    export default class MusicList extends Vue {
-        @Prop({default: []}) musicList!: Array<Music>;
+    export default class MusicList extends GreetingProps {
+        goMusic(musicId: number) {
+            let id = String(musicId);
+            this.$router.push({
+                name: 'music',
+                params: {
+                    musicId: id
+                }
+            });
+            EventBus.$emit('updateMusicId', musicId);
+        }
 
-        constructor() {
-            super();
-            this.musicList = new Array<Music>();
-            let music = new Music();
-            music.id = 1;
-            music.title = "Señorita";
-            music.album = "Señorita";
-            music.duration = "03:07";
-            music.singer = "Camila Cabello";
-            for (let i = 0; i < 10; i++) {
-                this.musicList.push(music);
-            }
+        play(musicParam: any) {
+            let belongAlbumImageUrl = '';
+            this.axios.get('/albums', {
+                params: {
+                    albumId: musicParam.belongAlbumId
+                }
+            }).then((response) => {
+                console.log(response);
+                belongAlbumImageUrl = 'http://www.another.ren:8089/images/' + response.data.data.image;
+                let music = {
+                    id: musicParam.id,
+                    name: musicParam.name,
+                    url: 'http://www.another.ren:8089/audios/' + musicParam.url,
+                    belongAlbumImageUrl: belongAlbumImageUrl,
+                    singer: musicParam.singerName,
+                    singerId: musicParam.singerId
+                };
+                EventBus.$emit('addRecord', music);
+            });
         }
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+  .title {
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
   #container {
     width: 100%;
   }

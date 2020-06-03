@@ -106,7 +106,7 @@
                 </el-table-column>
               </el-table>
             </el-tab-pane>
-            <el-tab-pane label="首页轮播" name="third"></el-tab-pane>
+<!--            <el-tab-pane label="首页轮播" name="third"></el-tab-pane>-->
           </el-tabs>
         </el-col>
       </el-row>
@@ -375,17 +375,39 @@
         }
 
         // 音乐试听
+        // play(row: any) {
+        //     console.log(row);
+        //     let music = {
+        //         id: 123,
+        //         name: '透明',
+        //         url: 'http://www.another.ren:8089/audios/透明.mp3',
+        //         belongAlbumImageUrl: 'http://www.another.ren:8089/images/another.jpg',
+        //         singer: '邓紫棋',
+        //         singerId: 123
+        //     };
+        //     EventBus.$emit('addRecord', music);
+        // }
+
         play(row: any) {
             console.log(row);
-            let music = {
-                id: 123,
-                name: '透明',
-                url: 'http://www.another.ren:8089/audios/透明.mp3',
-                belongAlbumImageUrl: 'http://www.another.ren:8089/images/another.jpg',
-                singer: '邓紫棋',
-                singerId: 123
-            };
-            EventBus.$emit('addRecord', music);
+            let belongAlbumImageUrl = '';
+            this.axios.get('/albums', {
+                params: {
+                    albumId: row.belongAlbumId
+                }
+            }).then((response) => {
+                console.log(response);
+                belongAlbumImageUrl = 'http://www.another.ren:8089/images/' + response.data.data.image;
+                let music = {
+                    id: row.id,
+                    name: row.name,
+                    url: 'http://www.another.ren:8089/audios/' + row.url,
+                    belongAlbumImageUrl: belongAlbumImageUrl,
+                    singer: row.singerName,
+                    singerId: row.singerId
+                };
+                EventBus.$emit('addRecord', music);
+            });
         }
 
         // 专辑过滤器比较方法

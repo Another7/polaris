@@ -4,23 +4,10 @@
       <div class="content-border">
         <div class="content">
           <div>
-            <SheetCoverInfo></SheetCoverInfo>
+            <SheetCoverInfo :sheetCover="sheetCover" :tags="tags"></SheetCoverInfo>
           </div>
           <div>
-            <MusicList></MusicList>
-          </div>
-          <div>
-            <PublishComment></PublishComment>
-          </div>
-          <div>
-            <p>评论列表</p>
-            <ShowComment :key="i" v-for="i in 10"></ShowComment>
-            <el-pagination
-                    :total="100"
-                    @current-change="demo"
-                    background
-                    layout="prev, pager, next">
-            </el-pagination>
+            <MusicList :musicList="musicList" :playCount="sheetCover.sheet.totalPlayCount"></MusicList>
           </div>
         </div>
       </div>
@@ -29,7 +16,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from 'vue-property-decorator';
+    import {Component, Vue, Watch} from 'vue-property-decorator';
     import SheetCoverInfo from "@/components/SheetCoverInfo.vue";
     import MusicList from "@/components/MusicList.vue";
     import PublishComment from "@/components/PublishComment.vue";
@@ -39,11 +26,65 @@
         components: {ShowComment, PublishComment, MusicList, SheetCoverInfo}
     })
     export default class SheetDetail extends Vue {
+        private sheetCover = {
+            creatorImage: '',
+            sheet: {}
+        };
+        private tags: Array<any> = [];
+        private musicList = [];
+        // 1,2,3 的形式
+        private musicIds = '';
 
+        @Watch("musicIds")
+        getCollectionMusic() {
+            this.axios.get('/musics/batch', {
+                params: {
+                    musicIdList: this.musicIds
+                }
+            }).then((response) => {
+                this.musicList = response.data;
+            })
+        }
+
+        created() {
+            this.axios.get('/sheets', {
+                params: {
+                    sheetId: this.$route.params.sheetId
+                }
+            }).then((response) => {
+                let musicSheetView = response.data.data;
+                this.sheetCover.creatorImage = musicSheetView.creatorImage;
+                this.sheetCover.sheet = musicSheetView.musicSheet;
+                let musicIdArray = JSON.parse(musicSheetView.musicSheet.collectionMusic);
+                let musicIds = '';
+                if (musicIdArray.length > 0) {
+                    for (let id of musicIdArray) {
+                        musicIds += id + ',';
+                    }
+                    this.musicIds = musicIds;
+                }
+                // 查询标签
+                let tagId: Array<any> = JSON.parse(musicSheetView.musicSheet.tag);
+                if (tagId.length > 0) {
+                    console.log('查询标签');
+                    for (let i = 0; i < tagId.length; i++) {
+                        this.axios.get('/tags', {
+                            params: {
+                                tagId: tagId[i]
+                            }
+                        }).then((response) => {
+                            let tag = response.data;
+                            this.tags.push(tag.tagName);
+                        })
+                    }
+                    console.log(this.tags);
+                }
+            })
+        }
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
   #container {
     .item {
       background-color: #f5f5f5;

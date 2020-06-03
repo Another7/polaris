@@ -10,33 +10,22 @@
             <SubTitle></SubTitle>
           </div>
           <div class="sheet-cover">
-            <SheetCover v-for="i in 10"></SheetCover>
+            <SheetCover :key="sheet.id" :sheet="sheet" v-for="sheet in sheetList"></SheetCover>
           </div>
-          <div>
+          <div v-if="$store.state.user.isLogin">
             <ClassifyTitle _title="个性化推荐"></ClassifyTitle>
           </div>
-          <div class="sheet-cover">
-            <SheetCover v-for="i in 5"></SheetCover>
-          </div>
-          <div>
-            <ClassifyTitle _title="新碟上架" _showMore="true"></ClassifyTitle>
-          </div>
-          <div class="sheet-cover">
-            <SheetCover v-for="i in 5"></SheetCover>
-          </div>
-          <div>
-            <ClassifyTitle _title="榜单" _showMore="true"></ClassifyTitle>
-          </div>
-          <div class="music-list">
-            <div>
-              <SimpleMusicList></SimpleMusicList>
+          <div class="sheet-cover" v-if="$store.state.user.isLogin">
+            <div class="recommend">
+              <div @click="recommendMusic" class="cover">
+                <el-avatar :src="recommendCover" shape="square"></el-avatar>
+              </div>
+              <div class="title">
+                <span>每日推荐</span>
+              </div>
             </div>
-            <div>
-              <SimpleMusicList></SimpleMusicList>
-            </div>
-            <div>
-              <SimpleMusicList></SimpleMusicList>
-            </div>
+            <SheetCover :key="recommendSheet.id" :sheet="recommendSheet"
+                        v-for="recommendSheet in recommendSheetList"></SheetCover>
           </div>
         </div>
       </div>
@@ -56,11 +45,37 @@
         components: {SimpleMusicList, SheetCover, SubTitle, ClassifyTitle, Carousel}
     })
     export default class Recommend extends Vue {
+        private sheetList: Array<any> = [];
+        private recommendSheetList: Array<any> = [];
+        private recommendCover: string = require("@/assets/recommend.jpg");
 
+        created() {
+            this.axios.get('/recommend/musicSheet', {
+                params: {
+                    userId: 1
+                }
+            }).then((response) => {
+                this.recommendSheetList.length = 0;
+                this.recommendSheetList = response.data;
+            });
+            this.axios.get('/sheets/recommend', {
+                params: {
+                    userId: null
+                }
+            }).then((response) => {
+                this.sheetList = response.data;
+            })
+        }
+
+        recommendMusic() {
+            this.$router.push({
+                name: 'recommendMusic'
+            });
+        }
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
   #container {
     .item {
       background-color: #f5f5f5;
@@ -85,6 +100,24 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
+
+            > .recommend {
+              > .cover {
+                width: 140px;
+                height: 140px;
+
+                > span {
+                  width: 140px;
+                  height: 140px;
+                }
+              }
+
+              > .title {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+            }
           }
 
           .music-list {

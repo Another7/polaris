@@ -1,13 +1,13 @@
 <template>
   <div id="container">
-    <img src="../assets/TIM5.jpg"/>
+    <img :src="'http://www.another.ren:8089/images/' + this.comment.commentatorImage"/>
     <div>
       <div class="comment">
-        <a href="">因为了解</a>：欠你的、、、
+        <a href="">{{comment.commentatorNickName}}</a>：{{comment.content}}
       </div>
       <div class="little-pie">
           <span class="left">
-            <span>5月28日 22:36</span>
+            <span>{{comment.createTime}}</span>
           </span>
         <span class="right">
             <span>点赞</span>
@@ -20,15 +20,20 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from 'vue-property-decorator';
+    import {Component, Vue} from 'vue-property-decorator';
 
+    const GreetingProps = Vue.extend({
+        props: {
+            comment: Object
+        }
+    });
     @Component
-    export default class ShowComment extends Vue {
+    export default class ShowComment extends GreetingProps {
 
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
   #container {
     width: 100%;
     display: flex;

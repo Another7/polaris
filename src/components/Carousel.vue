@@ -24,8 +24,8 @@
         created() {
             this.images = new Array<string>();
             this.images.push(require("@/assets/leaf.jpg"));
-            this.images.push(require("@/assets/leaf.jpg"));
-            this.images.push(require("@/assets/leaf.jpg"));
+            this.images.push(require("@/assets/TIM7.jpg"));
+            this.images.push(require("@/assets/desktop.jpg"));
         }
     }
 </script>

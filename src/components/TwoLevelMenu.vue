@@ -5,8 +5,8 @@
         <li><router-link to="/recommend">推荐</router-link></li>
         <li><router-link to="/ranking">排行榜</router-link></li>
         <li><router-link to="/sheet">歌单</router-link></li>
-        <li><router-link to="/singer">歌手</router-link></li>
-        <li><router-link to="/newMusic">新碟上架</router-link></li>
+        <!--        <li><router-link to="/singer">歌手</router-link></li>-->
+        <!--        <li><router-link to="/newMusic">新碟上架</router-link></li>-->
       </ul>
     </div>
   </div>

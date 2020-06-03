@@ -18,6 +18,13 @@ import Administrator from "@/views/administrator/Administrator.vue";
 import MyAlbum from "@/views/creator/MyAlbum.vue";
 import SearchResult from "@/views/SearchResult.vue";
 import PersonInfo from "@/views/PersonInfo.vue";
+import Music from "@/components/Music.vue";
+import Album from "@/components/Album.vue";
+import MySinger from "@/views/mymusic/MySinger.vue";
+import MySheet from "@/views/mymusic/MySheet.vue";
+import EditSheet from "@/views/mymusic/EditSheet.vue";
+import MyFollow from "@/views/creator/MyFollow.vue";
+import RecommendMusic from "@/components/RecommendMusic.vue";
 
 Vue.use(Router);
 
@@ -77,13 +84,46 @@ export default new Router({
                             path: '/personInfo',
                             name: 'personInfo',
                             component: PersonInfo
+                        },
+                        {
+                            path: '/music',
+                            name: 'music',
+                            component: Music
+                        },
+                        {
+                            path: '/album',
+                            name: 'album',
+                            component: Album
+                        },
+                        {
+                            path: '/recommendMusic',
+                            name: 'recommendMusic',
+                            component: RecommendMusic
                         }
                     ]
                 },
                 {
                     path: '/myMusic',
                     name: 'myMusic',
-                    component: MyMusic
+                    component: MyMusic,
+                    redirect: '/mySinger',
+                    children: [
+                        {
+                            path: '/mySinger',
+                            name: 'mySinger',
+                            component: MySinger
+                        },
+                        {
+                            path: '/mySheet',
+                            name: 'mySheet',
+                            component: MySheet
+                        },
+                        {
+                            path: '/editSheet',
+                            name: 'editSheet',
+                            component: EditSheet
+                        }
+                    ]
                 },
                 {
                     path: '/friend',
@@ -117,6 +157,11 @@ export default new Router({
                     path: '/myAlbum',
                     name: 'myAlbum',
                     component: MyAlbum
+                },
+                {
+                    path: '/myFollow',
+                    name: 'myFollow',
+                    component: MyFollow
                 }
             ]
         },

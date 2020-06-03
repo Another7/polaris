@@ -36,7 +36,8 @@
             </el-upload>
           </el-form-item>
           <el-form-item>
-            <el-button @click="submitAlbum('albumForm')" type="primary">发布</el-button>
+            <el-button @click="submitAlbum('albumForm')" type="primary" v-if="!publishSuccess">发布</el-button>
+            <el-button type="info" v-else>已发布</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -88,6 +89,7 @@
                 }
             ]
         };
+        private publishSuccess: boolean = false;
 
         // 音频文件类型校验
         typeVerify(file: any) {
@@ -133,20 +135,18 @@
                         description: this.albumForm.description,
                         singerId: this.$store.state.singer.id,
                         singerName: this.$store.state.singer.nickName,
-                        //TODO 生产环境修改为实际路径
-                        image: this.imageUrl,
+                        image: this.albumForm.image,
                         collectionMusic: JSON.stringify(this.albumForm.musicList),
                         status: 0
                     }).then((response) => {
                         console.log(response.data);
                         let album = response.data;
-                        if (album.id) {
+                        if (album.id != 0) {
                             this.$message.success('专辑发布成功！！！');
                             //TODO 跳转到作品数据页面
                             this.$router.push('myAlbum');
                         }
                     });
-                    console.log('发布专辑');
                 } else {
                     console.log('error submit');
                     return false;

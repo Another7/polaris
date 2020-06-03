@@ -60,6 +60,7 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
+    import store from '@/store';
 
     @Component
     export default class PersonInfo extends Vue {
@@ -97,7 +98,7 @@
 
         save() {
             console.log(this.personInfo);
-            //TODO 更新保存用户个人信息
+            // 更新保存用户个人信息
             this.axios.put('/users', {
                 id: this.personInfo.id,
                 nickName: this.personInfo.nickName,
@@ -108,6 +109,10 @@
                 image: this.personInfo.imageUrl
             }).then((response) => {
                 console.log(response);
+                //  更新Vuex中的用户头像信息
+                store.commit('updateAvatar', {
+                    avatar: this.personInfo.imageUrl
+                });
                 this.$message.success('保存成功');
             });
         }

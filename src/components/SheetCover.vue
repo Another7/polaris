@@ -1,41 +1,38 @@
 <template>
   <div id="container">
     <div :sheetId="sheet.id" @click="sheetDetails(sheet.id)">
-      <img :src="sheet.img" alt="">
+      <img :src="'http://www.another.ren:8089/images/' + sheet.image" alt="">
       <div class="shadow">
         <i class="el-icon-headset"></i>
-        <span>67万</span>
+        <span>{{sheet.totalPlayCount}}</span>
       </div>
       <router-link class="title" to="">{{sheet.title}}</router-link>
-      <div v-if="showCreator">{{sheet.creator}}</div>
+      <div v-if="showCreator">{{sheet.creatorNickName}}</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
     import {Component, Prop, Vue} from 'vue-property-decorator';
-    import {Sheet} from "@/domain/Sheet";
+
+    const GreetingProps = Vue.extend({
+        props: {
+            sheet: {}
+        }
+    });
+
 
     @Component
-    export default class SheetCover extends Vue {
-        @Prop({
-            default: () => (
-                {
-                    "id": 123,
-                    "title": "demo",
-                    "img": require("../assets/leaf.jpg"),
-                    "playNumber": 0,
-                    "creator": "another",
-                    "creatorId": 0
-                }
-            )
-        })
-        sheet!: Sheet;
+    export default class SheetCover extends GreetingProps {
         @Prop({default: false}) showCreator!: boolean;
 
         sheetDetails(id: Number) {
+            let sheetId = String(id);
             this.$router.push({
-                path: '/sheetDetail'
+                name: 'sheetDetail',
+                params: {
+                    sheetId: sheetId
+                }
             });
         }
     }

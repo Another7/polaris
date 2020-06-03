@@ -5,7 +5,9 @@
       <OneLevelMenu></OneLevelMenu>
     </div>
     <div class="item">
-      <router-view></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </div>
     <div class="item">
       <Footer></Footer>

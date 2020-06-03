@@ -1,5 +1,5 @@
 let user = {
-    id: '',
+    id: 0,
     nickName: '',
     isLogin: false,
     account: '',

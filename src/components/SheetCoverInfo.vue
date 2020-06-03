@@ -2,49 +2,39 @@
   <div id="container">
     <div>
       <div class="cover">
-        <img src="../assets/TIM4.jpg" style="width: 200px; height: 200px;">
+        <img :src="'http://www.another.ren:8089/images/' + this.sheetCover.sheet.image"
+             style="width: 200px; height: 200px;">
       </div>
       <div class="info">
         <div class="title">
           <div>歌单</div>
-          <div>I love it when you call me Señorita</div>
+          <div>{{sheetCover.sheet.title}}</div>
         </div>
         <div class="creator">
           <div>
-            <img src="../assets/TIM5.jpg">
+            <img :src="'http://www.another.ren:8089/images/' + this.sheetCover.creatorImage">
           </div>
           <div>
-            <a href="#">Senorita</a>
+            <router-link to="#">{{sheetCover.sheet.creatorNickName}}</router-link>
           </div>
           <div>
-            <span>2019-06-06 创建</span>
+            <span>{{sheetCover.sheet.createTime}} 创建</span>
           </div>
         </div>
         <div class="operation">
-          <div>button</div>
-          <div>button</div>
-          <div>button</div>
-          <div>button</div>
-          <div>button</div>
+          <el-button @click="collectionSheet" type="primary" v-if="!collected">收藏</el-button>
+          <el-button type="info" v-else>已收藏</el-button>
         </div>
-        <div class="tag">
+        <div class="tag" v-if="JSON.parse(this.sheetCover.sheet.tag).length > 0">
           <div>标签：</div>
           <div>
-            <span>欧美</span>
-            <span>轻音乐</span>
-            <span>舒缓</span>
+            <el-tag :key="tag" v-for="tag in this.tags">{{tag}}</el-tag>
           </div>
         </div>
-        <div>
-          介绍：
+        <div v-if="this.sheetCover.sheet.description">
+          介绍:
           <br/>
-          I love it when you call me Señorita
-
-            I love it when you call me Señorita
-            I love it when you call me Señorita
-            I love it when you call me Señorita
-            I love it when you call me Señorita
-            I love it when you call me Señorita
+          {{sheetCover.sheet.description}}
         </div>
       </div>
     </div>
@@ -54,13 +44,37 @@
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
 
+    const GreetingProps = Vue.extend({
+        props: {
+            sheetCover: Object,
+            tags: Array
+        }
+    });
     @Component
-    export default class SheetCoverInfo extends Vue {
+    export default class SheetCoverInfo extends GreetingProps {
+        private collected: boolean = false;
 
+        /**
+         * 收藏歌单
+         */
+        collectionSheet() {
+            this.axios.post('/UserCollectionSheet', {
+                userId: this.$store.state.user.id,
+                sheetId: this.sheetCover.sheet.id,
+                sheetTitle: this.sheetCover.sheet.title,
+                sheetImage: this.sheetCover.sheet.image
+            }).then((response) => {
+                console.log(response);
+                if (response.data === 1) {
+                    this.$message.success('收藏成功');
+                    this.collected = true;
+                }
+            })
+        }
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
   #container {
     width: 100%;
 
@@ -139,11 +153,7 @@
           margin-left: 10px;
 
           > span {
-            margin: 0 10px;
-            color: #777777;
-            background-color: #f5f5f5;
-            padding: 5px 10px;
-            border-radius: 10px;
+            margin-left: 10px;
           }
         }
       }

@@ -2,33 +2,59 @@
   <div id="container">
     <div class="comment-number">
       <span>评论</span>
-      <span>1234</span>
+      <span>{{commentCount}}</span>
     </div>
     <div class="comment-area">
       <div class="comment-input">
-        <img src="../assets/TIM5.jpg"/>
-        <textarea placeholder="评论"></textarea>
+        <img :src="'http://www.another.ren:8089/images/' + this.$store.state.user.avatar"/>
+        <textarea placeholder="评论" style="resize: none" v-model="content"></textarea>
       </div>
     </div>
     <div class="comment-limit">
-      <span>1234</span>
-      <span class="comment-button">
+      <span>140</span>
+      <span @click="publishComment" class="comment-button">
           评论
-        </span>
+      </span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
+    import EventBus from "@/utils/EventBus";
+
+    const GreetingProps = Vue.extend({
+        props: {
+            commentCount: Number,
+            musicId: Number
+        }
+    });
 
     @Component
-    export default class PublishComment extends Vue {
+    export default class PublishComment extends GreetingProps {
+        private content: string = '';
 
+        publishComment() {
+            this.axios.post('/comments', {
+                type: 0,
+                content: this.content,
+                thumbNumber: 0,
+                recordId: this.musicId,
+                commentatorId: this.$store.state.user.id,
+                commentatorNickName: this.$store.state.user.nickName,
+                commentatorImage: this.$store.state.user.avatar
+            }).then((response) => {
+                console.log(response);
+                if (response.data === 1) {
+                    this.content = '';
+                    EventBus.$emit('updateCommentCount');
+                }
+            })
+        }
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
   #container {
     width: 100%;
     display: flex;

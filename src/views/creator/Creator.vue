@@ -13,7 +13,7 @@
               <div class="right">
                 <span>{{user.nickName}}</span>
                 <el-avatar
-                        :src="user.avatar"></el-avatar>
+                        :src="'http://www.another.ren:8089/images/' + user.avatar"></el-avatar>
               </div>
             </div>
           </el-col>
@@ -76,9 +76,6 @@
             if (user !== null) {
                 this.user = JSON.parse(user);
             }
-            //TODO 存储到vuex user 和singer
-            console.log('this.user');
-            console.log(this.user);
         }
 
         handleSelect(key: any, keyPath: any) {
@@ -90,7 +87,7 @@
                     this.$router.push('myAlbum');
                     break;
                 case '3':
-                    this.$router.push('');
+                    this.$router.push('myFollow');
                     break;
                 default:
                     break
